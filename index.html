@@ -460,83 +460,8 @@ tr:hover .delete-btn { opacity: 1; }
 
 <script>
 const STORAGE_KEY = 'albert_deals';
-const initialDeals = [
-  { id: 'csv_74da6c4d', name: 'КиберБэкап', date: '2026-05-04', planned: '2026-02-11', amount: 2437984.37 },
-  { id: 'csv_3f047454', name: 'F6 Attack Surface Management', date: '2026-03-25', planned: '2026-02-10', amount: 2064000 },
-  { id: 'csv_ee165e8c', name: 'Аудит', date: '2026-02-24', planned: '2026-01-30', amount: 444492 },
-  { id: 'csv_2a7962f1', name: 'ТП Solar WebProxy 26-27гг.', date: '2026-02-24', planned: '2026-01-14', amount: 2567870.84 },
-  { id: 'csv_d08aba97', name: 'Solar WebProxy ПАК 25-27гг.', date: '2026-01-14', planned: '2026-01-14', amount: 11423029 },
-  { id: 'csv_10449586', name: 'Xello', date: '2026-01-12', planned: '2026-01-12', amount: 9737525 },
-  { id: 'csv_5cc259fb', name: 'ТП от вендора PT AF', date: '2026-01-12', planned: '2026-01-12', amount: 926289 },
-  { id: 'csv_e5b8be26', name: 'Гарда расширение +30лиц.', date: '2025-12-10', planned: '2025-12-10', amount: 3279536.96 },
-  { id: 'csv_6531ec08', name: 'CyberArk PAM', date: '2025-11-12', planned: '2025-11-12', amount: 2991510 },
-  { id: 'csv_1d66f019', name: 'Банк "Оренбург"/Инфовотч', date: '2026-05-06', planned: '2025-11-18', amount: 561348.09 },
-  { id: 'csv_d41ce210', name: 'Kaspersky Endpoint Security', date: '2025-10-29', planned: '2025-10-29', amount: 43965 },
-  { id: 'csv_09622d1c', name: 'SolidWall', date: '2025-10-27', planned: '2025-10-27', amount: 932200 },
-  { id: 'csv_362f3d4c', name: 'Solar WebProxy 24-25', date: '2025-10-27', planned: '2025-10-27', amount: 1290000 },
-  { id: 'csv_a8b08f0b', name: 'Внедрение Solar WebProxy', date: '2025-10-22', planned: '2025-10-22', amount: 5601750 },
-  { id: 'csv_d3f6256a', name: 'Установка и ПАК Solar NGFW', date: '2025-10-22', planned: '2025-10-22', amount: 3379042 },
-  { id: 'csv_9b68bbd5', name: 'PostGress Pro', date: '2026-01-14', planned: '2026-01-14', amount: 9468202 },
-  { id: 'csv_42ada93d', name: 'ТП Solar WebProxy', date: '2025-10-22', planned: '2025-10-22', amount: 2621271 },
-  { id: 'csv_ba604b4c', name: 'F6 NTA', date: '2026-03-30', planned: '2026-02-03', amount: 2800000 },
-  { id: 'csv_a1ac273c', name: 'Solar WebProxy', date: '2025-10-27', planned: '2025-10-27', amount: 1240000 },
-  { id: 'csv_b93c0d3d', name: 'MFlash', date: '2026-01-12', planned: '2026-01-12', amount: 725600 },
-  { id: 'csv_d6b4311c', name: 'PT VM 25-26гг.', date: '2025-10-09', planned: '2025-10-09', amount: 9999880 },
-  { id: 'csv_0ade8f1b', name: 'Kaspersky DDoS', date: '2025-10-09', planned: '2025-10-09', amount: 3947658.3 },
-  { id: 'csv_bc655ac7', name: 'Web Proxy', date: '2025-10-08', planned: '2025-10-08', amount: 1219276 },
-  { id: 'csv_21b7a526', name: 'Аудит', date: '2026-01-12', planned: '2026-01-12', amount: 1500000 },
-  { id: 'csv_3e3f855b', name: 'McAfee', date: '2025-10-22', planned: '2025-10-22', amount: 1995000 },
-  { id: 'csv_b2bb39c4', name: 'КИБЕРпротект/ КиберБэкап 26г.', date: '2026-04-14', planned: '2025-10-13', amount: 3598646.7 },
-  { id: 'csv_86dafec5', name: 'SOLAR NGFW 25-26гг.', date: '2026-01-12', planned: '2026-01-12', amount: 12736661.16 },
-  { id: 'csv_dd2e1514', name: 'Positive Technologies AI', date: '2025-11-11', planned: '2025-11-11', amount: 2425800 },
-  { id: 'csv_7e101391', name: 'CyberArk Privileged Access Manger (PAM)', date: '2025-10-01', planned: '2025-10-01', amount: 3371550 },
-  { id: 'csv_3d959d40', name: 'Indeed AM', date: '2026-03-03', planned: '2025-10-08', amount: 10831288.8 },
-  { id: 'csv_6b64c3cf', name: 'Positive Technologies MaxPatrol VM', date: '2025-10-01', planned: '2025-10-01', amount: 4827900 },
-  { id: 'csv_94b3196e', name: 'Техническая поддержка по 1IDM', date: '2025-10-01', planned: '2025-10-01', amount: 1731248.64 },
-  { id: 'csv_a1b3de2a', name: 'ПО Mflash', date: '2025-10-01', planned: '2025-10-01', amount: 3618000 },
-  { id: 'csv_5b194f38', name: 'Техническая поддержка PT AF', date: '2025-10-01', planned: '2025-10-01', amount: 300000 },
-  { id: 'csv_704d4ab5', name: 'Kaspersky Total Security', date: '2025-10-01', planned: '2025-10-01', amount: 2453100 },
-  { id: 'csv_90465f98', name: 'Kaspersky Automated Security Awareness', date: '2025-10-01', planned: '2025-10-01', amount: 472300 },
-  { id: 'csv_85492acd', name: 'Kaspersky KATA+EDR', date: '2025-10-01', planned: '2025-10-01', amount: 2518200 },
-  { id: 'csv_7a640b18', name: 'Kaspersky KATA', date: '2025-10-01', planned: '2025-10-01', amount: 6887126 },
-  { id: 'csv_c4353b6a', name: 'ПО Xello Deception', date: '2025-10-01', planned: '2025-10-01', amount: 9936000 },
-  { id: 'csv_f91cba80', name: 'InfoWatch IWPM +50', date: '2026-03-30', planned: '2025-10-07', amount: 2695160.87 },
-  { id: 'csv_27ebbc26', name: '1IDM лицензия бессрочная', date: '2025-09-29', planned: '2025-09-29', amount: 3540000 },
-  { id: 'csv_f456c3e3', name: 'Kaspersky', date: '2025-09-29', planned: '2025-09-29', amount: 42475 },
-  { id: 'csv_329eb996', name: 'ОС Windows 2022', date: '2025-09-29', planned: '2025-09-29', amount: 1197504 },
-  { id: 'csv_34e50b90', name: 'F6 BEP 25-26гг.', date: '2025-09-29', planned: '2025-09-29', amount: 3898047.6 },
-  { id: 'csv_c9d640a2', name: 'Kaspersky', date: '2025-09-29', planned: '2025-09-29', amount: 98010 },
-  { id: 'csv_9b67bbbd', name: 'Indeed Access Manager 24-25гг.', date: '2025-11-12', planned: '2025-11-12', amount: 680250 },
-  { id: 'csv_2f3a1c57', name: 'McAfee ESM', date: '2025-09-29', planned: '2025-09-29', amount: 885500 },
-  { id: 'csv_7c1e5bbc', name: 'CyberArk Privileged Access Manager (PAM)', date: '2025-09-29', planned: '2025-09-29', amount: 3298000 },
-  { id: 'csv_53f5ebec', name: 'Indeed PAM', date: '2025-11-11', planned: '2025-11-11', amount: 10480131 },
-  { id: 'csv_166521f6', name: 'Indeed Privileged Access Manager', date: '2025-09-29', planned: '2025-09-29', amount: 10480131 },
-  { id: 'csv_11397c3b', name: 'Indeed PAM 26-27гг.', date: '2026-01-16', planned: '2026-01-16', amount: 2599740 },
-  { id: 'csv_52fc5fe7', name: 'Kaspersky', date: '2025-09-29', planned: '2025-09-29', amount: 369515 },
-  { id: 'csv_63a0b037', name: 'Kaspersky DDoS', date: '2025-10-01', planned: '2025-10-01', amount: 3947658.3 },
-  { id: 'csv_c0927907', name: 'CyberArk PAM', date: '2025-09-29', planned: '2025-09-29', amount: 2091665 },
-  { id: 'csv_8ae98e87', name: 'Установка и поддержка 1IDM', date: '2025-09-29', planned: '2025-09-29', amount: 3709000 },
-  { id: 'csv_d55dcedd', name: 'Перенос ЦОД INDEED PAM', date: '2026-01-14', planned: '2026-01-14', amount: 1498200 },
-  { id: 'csv_65287212', name: 'Kaspersky EDR', date: '2025-11-14', planned: '2025-11-14', amount: 1318081.3 },
-  { id: 'csv_5c36a036', name: 'Kaspersky DDoS', date: '2025-10-06', planned: '2025-10-06', amount: 3845546.4 },
-  { id: 'csv_7e6060ec', name: 'Solar WebProxy 25-27гг.', date: '2025-11-17', planned: '2025-11-17', amount: 6161925 },
-  { id: 'csv_f966b3a2', name: 'ГАРДА БД', date: '2025-10-10', planned: '2025-10-10', amount: 3279536.96 },
-  { id: 'csv_b1473a1a', name: 'SOTI ONE', date: '2025-10-01', planned: '2025-10-01', amount: 575000 },
-  { id: 'csv_1dd662b0', name: 'MFlash', date: '2025-10-22', planned: '2025-10-22', amount: 7412500 },
-  { id: 'csv_04488f61', name: 'Сделка #178', date: '2025-02-07', planned: '2025-02-07', amount: 36670202 },
-  { id: 'csv_e0054929', name: 'РиК: IDM', date: '2024-11-12', planned: '2024-11-12', amount: 8999 },
-  { id: 'csv_0b47a721', name: 'MDM: Рога и Копыта', date: '2024-11-10', planned: '2024-11-10', amount: 7000 },
-  { id: 'csv_208215d3', name: 'MDM: Рога и Копыта', date: '2024-11-10', planned: '2024-11-10', amount: 126666 },
-];
-let deals = [];
-
-function loadDeals() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) deals = JSON.parse(raw);
-    else { deals = initialDeals.slice(); saveDeals(); }
-  } catch(e) { deals = initialDeals.slice(); }
-}
+let localDeals = [];
+let bitrixDeals = [];
 
 function loadDeals() {
   try {
