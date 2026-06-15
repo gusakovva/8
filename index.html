@@ -1,0 +1,781 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сделки по кварталам</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  background: linear-gradient(180deg, #3b82f6 0%, #7ec8e3 35%, #b5e2fa 60%, #dbeafe 80%, #f0f9ff 100%);
+  min-height: 100vh;
+  color: #ffffff;
+  padding: 32px 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.container { max-width: 1040px; width: 100%; }
+
+/* Header */
+.header { text-align: center; margin-bottom: 36px; }
+
+.header h1 {
+  font-size: 30px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+
+.header p { color: rgba(255,255,255,0.8); font-size: 14px; margin-top: 6px; letter-spacing: 0.3px; }
+
+/* Add card */
+.add-card {
+  background: rgba(255, 255, 255, 0.75);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-radius: 18px;
+  padding: 24px 28px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 24px rgba(180, 140, 100, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  transition: box-shadow .35s;
+}
+
+.add-card:hover { box-shadow: 0 6px 36px rgba(180, 140, 100, 0.14); }
+
+.add-card h2 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #5d4a3a;
+  margin-bottom: 18px;
+  letter-spacing: 0.2px;
+}
+
+.form-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: end; }
+
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+
+.form-group label {
+  font-size: 11px;
+  color: #b09a8a;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.form-group input {
+  padding: 10px 14px;
+  border: 1.5px solid #e8ddd0;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  background: rgba(255,255,255,0.5);
+  transition: all .25s;
+  color: #3d3229;
+}
+
+.form-group input:focus {
+  border-color: #d4785a;
+  box-shadow: 0 0 0 3px rgba(212, 120, 90, 0.15);
+  background: #fff;
+}
+
+.form-group input::placeholder { color: #d0c4b8; }
+
+.btn {
+  padding: 10px 28px;
+  background: linear-gradient(135deg, #d4785a, #b8654d);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all .25s;
+  white-space: nowrap;
+  box-shadow: 0 3px 12px rgba(212, 120, 90, 0.25);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 120, 90, 0.35);
+}
+
+.btn:active { transform: translateY(0); }
+
+.btn-outline {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  box-shadow: none;
+  border: 1.5px solid rgba(255,255,255,0.35);
+  padding: 8px 18px;
+  font-size: 13px;
+}
+
+.btn-outline:hover {
+  background: rgba(212, 120, 90, 0.07);
+  border-color: #d4785a;
+  color: #d4785a;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Year section */
+.year-section { margin-bottom: 36px; }
+
+.year-header {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid rgba(212, 120, 90, 0.12);
+}
+
+.year-header .year-label {
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.3px;
+}
+
+.year-header .year-total {
+  font-size: 15px;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Quarter grid */
+.quarter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+@media (max-width: 700px) {
+  .quarter-grid { grid-template-columns: 1fr; }
+}
+
+/* Quarter card */
+.q-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(160, 120, 90, 0.08);
+  overflow: hidden;
+  transition: box-shadow .3s;
+  transform: translateZ(0);
+}
+
+.q-card:hover { box-shadow: 0 6px 28px rgba(160, 120, 90, 0.12); }
+
+.q-card-header {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  transition: background .25s;
+  gap: 12px;
+}
+
+.q-card-header .q-name {
+  font-weight: 700;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.q-card-header .q-arrow {
+  font-size: 11px;
+  transition: transform .35s ease;
+  opacity: 0.7;
+  display: inline-block;
+}
+
+.q-card-header .q-arrow.open { transform: rotate(180deg); }
+
+.q-card-header .q-total {
+  font-weight: 700;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+/* Quarter themes - more vibrant */
+.q1 .q-card-header {
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
+  color: #fff;
+}
+.q1 .q-total { color: rgba(255,255,255,0.95); }
+
+.q2 .q-card-header {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #fff;
+}
+.q2 .q-total { color: rgba(255,255,255,0.95); }
+
+.q3 .q-card-header {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff;
+}
+.q3 .q-total { color: rgba(255,255,255,0.95); }
+
+.q4 .q-card-header {
+  background: linear-gradient(135deg, #f43f5e, #e11d48);
+  color: #fff;
+}
+.q4 .q-total { color: rgba(255,255,255,0.95); }
+
+/* Empty card */
+.q-card.empty,
+.q-card.collapsed { background: transparent; box-shadow: none; }
+.q-card.empty .q-card-header { cursor: default; opacity: 0.6; }
+
+.q-card-body {
+  transition: max-height .35s ease, opacity .25s ease;
+  overflow: hidden;
+  max-height: 2000px;
+  opacity: 1;
+  background: #fff;
+  will-change: max-height, opacity;
+}
+
+.q-card-body.collapsed {
+  max-height: 0 !important;
+  opacity: 0;
+}
+
+/* Table inside card */
+.q-table { width: 100%; border-collapse: collapse; }
+
+.q-table thead th {
+  text-align: left;
+  padding: 8px 14px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #b09a8a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: #faf7f4;
+  border-bottom: 1px solid #f0e8e0;
+}
+
+.q-table tbody td {
+  padding: 7px 14px;
+  font-size: 12px;
+  border-bottom: 1px solid #f5f0ea;
+  color: #4a3a2a;
+  transition: background .15s;
+}
+
+.q-table tbody tr:hover td { background: #fdfaf7; }
+.q-table tbody tr:last-child td { border-bottom: none; }
+
+.q-table .deal-name-cell {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #7a6a5a;
+}
+
+.q-table .amount-cell {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  white-space: nowrap;
+  color: #3d3229;
+}
+
+.q-table .total-row td {
+  font-weight: 700;
+  color: #4a3a2a;
+  border-top: 2px solid rgba(212, 120, 90, 0.12);
+  padding-top: 12px;
+  padding-bottom: 12px;
+  background: transparent !important;
+}
+
+.planned-date-cell { color: #9a8a7a; font-size: 12px; }
+.planned-th { }
+.q-table .delete-cell { width: 30px; text-align: center; }
+
+/* Delete button */
+.delete-btn {
+  background: none;
+  border: none;
+  color: #d0c4b8;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all .2s;
+  opacity: 0;
+  line-height: 1;
+}
+
+tr:hover .delete-btn { opacity: 1; }
+.delete-btn:hover { color: #e85a3a; background: rgba(232, 90, 58, 0.08); }
+
+/* Grand total */
+.grand-total {
+  text-align: center;
+  padding: 28px;
+  background: linear-gradient(135deg, rgba(212, 120, 90, 0.08), rgba(212, 120, 90, 0.03));
+  border-radius: 16px;
+  border: 1px solid rgba(212, 120, 90, 0.08);
+  margin-top: 8px;
+}
+
+.grand-total .label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #b09a8a;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.grand-total .value {
+  display: block;
+  font-size: 32px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #d4785a, #b8654d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-top: 6px;
+}
+
+/* Empty state */
+.empty-state { text-align: center; padding: 60px 20px; color: #c4b8ab; }
+.empty-state .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
+.empty-state strong { display: block; font-size: 16px; color: #b09a8a; margin-bottom: 4px; }
+.empty-state p { font-size: 13px; }
+
+/* Controls bar */
+.controls-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.controls-bar h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.deal-count {
+  font-size: 12px;
+  color: rgba(255,255,255,0.7);
+  font-weight: 400;
+}
+
+.deals-wrapper { min-height: 100px; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d4c8b8; border-radius: 3px; }
+
+/* Quarter column for empty state */
+.q-card-empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 80px;
+  color: #d0c4b8;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Info badge */
+.info-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #b09a8a;
+  margin-top: 8px;
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 8px;
+}
+
+.info-badge code {
+  font-family: inherit;
+  background: rgba(0,0,0,0.04);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Сделки по кварталам</h1>
+    <p>Дата закрытия — по факту перевода в стадию «Сделку заключена»</p>
+  </div>
+
+  <div class="add-card">
+    <h2>Новая сделка</h2>
+    <form id="dealForm" class="form-row">
+      <div class="form-group">
+        <label for="dealDate">Дата закрытия</label>
+        <input type="date" id="dealDate" required>
+      </div>
+      <div class="form-group" style="flex:1;min-width:140px;">
+        <label for="dealName">Название сделки</label>
+        <input type="text" id="dealName" placeholder="Например: Аудит">
+      </div>
+      <div class="form-group">
+        <label for="dealAmount">Сумма (₽)</label>
+        <input type="number" id="dealAmount" step="0.01" min="0" placeholder="0.00" required>
+      </div>
+      <div class="form-group" style="padding-bottom:1px;">
+        <button type="submit" class="btn">Добавить</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="controls-bar">
+    <h2>Все сделки <span class="deal-count" id="dealCountLabel"></span></h2>
+    <button class="btn btn-outline" id="clearAllBtn">Очистить всё</button>
+  </div>
+
+  <div id="quarterContent" class="deals-wrapper"></div>
+  <div id="grandTotalContainer"></div>
+</div>
+
+<script>
+const STORAGE_KEY = 'albert_deals';
+const initialDeals = [
+  { id: 'csv_74da6c4d', name: 'КиберБэкап', date: '2026-05-04', planned: '2026-02-11', amount: 2437984.37 },
+  { id: 'csv_3f047454', name: 'F6 Attack Surface Management', date: '2026-03-25', planned: '2026-02-10', amount: 2064000 },
+  { id: 'csv_ee165e8c', name: 'Аудит', date: '2026-02-24', planned: '2026-01-30', amount: 444492 },
+  { id: 'csv_2a7962f1', name: 'ТП Solar WebProxy 26-27гг.', date: '2026-02-24', planned: '2026-01-14', amount: 2567870.84 },
+  { id: 'csv_d08aba97', name: 'Solar WebProxy ПАК 25-27гг.', date: '2026-01-14', planned: '2026-01-14', amount: 11423029 },
+  { id: 'csv_10449586', name: 'Xello', date: '2026-01-12', planned: '2026-01-12', amount: 9737525 },
+  { id: 'csv_5cc259fb', name: 'ТП от вендора PT AF', date: '2026-01-12', planned: '2026-01-12', amount: 926289 },
+  { id: 'csv_e5b8be26', name: 'Гарда расширение +30лиц.', date: '2025-12-10', planned: '2025-12-10', amount: 3279536.96 },
+  { id: 'csv_6531ec08', name: 'CyberArk PAM', date: '2025-11-12', planned: '2025-11-12', amount: 2991510 },
+  { id: 'csv_1d66f019', name: 'Банк "Оренбург"/Инфовотч', date: '2026-05-06', planned: '2025-11-18', amount: 561348.09 },
+  { id: 'csv_d41ce210', name: 'Kaspersky Endpoint Security', date: '2025-10-29', planned: '2025-10-29', amount: 43965 },
+  { id: 'csv_09622d1c', name: 'SolidWall', date: '2025-10-27', planned: '2025-10-27', amount: 932200 },
+  { id: 'csv_362f3d4c', name: 'Solar WebProxy 24-25', date: '2025-10-27', planned: '2025-10-27', amount: 1290000 },
+  { id: 'csv_a8b08f0b', name: 'Внедрение Solar WebProxy', date: '2025-10-22', planned: '2025-10-22', amount: 5601750 },
+  { id: 'csv_d3f6256a', name: 'Установка и ПАК Solar NGFW', date: '2025-10-22', planned: '2025-10-22', amount: 3379042 },
+  { id: 'csv_9b68bbd5', name: 'PostGress Pro', date: '2026-01-14', planned: '2026-01-14', amount: 9468202 },
+  { id: 'csv_42ada93d', name: 'ТП Solar WebProxy', date: '2025-10-22', planned: '2025-10-22', amount: 2621271 },
+  { id: 'csv_ba604b4c', name: 'F6 NTA', date: '2026-03-30', planned: '2026-02-03', amount: 2800000 },
+  { id: 'csv_a1ac273c', name: 'Solar WebProxy', date: '2025-10-27', planned: '2025-10-27', amount: 1240000 },
+  { id: 'csv_b93c0d3d', name: 'MFlash', date: '2026-01-12', planned: '2026-01-12', amount: 725600 },
+  { id: 'csv_d6b4311c', name: 'PT VM 25-26гг.', date: '2025-10-09', planned: '2025-10-09', amount: 9999880 },
+  { id: 'csv_0ade8f1b', name: 'Kaspersky DDoS', date: '2025-10-09', planned: '2025-10-09', amount: 3947658.3 },
+  { id: 'csv_bc655ac7', name: 'Web Proxy', date: '2025-10-08', planned: '2025-10-08', amount: 1219276 },
+  { id: 'csv_21b7a526', name: 'Аудит', date: '2026-01-12', planned: '2026-01-12', amount: 1500000 },
+  { id: 'csv_3e3f855b', name: 'McAfee', date: '2025-10-22', planned: '2025-10-22', amount: 1995000 },
+  { id: 'csv_b2bb39c4', name: 'КИБЕРпротект/ КиберБэкап 26г.', date: '2026-04-14', planned: '2025-10-13', amount: 3598646.7 },
+  { id: 'csv_86dafec5', name: 'SOLAR NGFW 25-26гг.', date: '2026-01-12', planned: '2026-01-12', amount: 12736661.16 },
+  { id: 'csv_dd2e1514', name: 'Positive Technologies AI', date: '2025-11-11', planned: '2025-11-11', amount: 2425800 },
+  { id: 'csv_7e101391', name: 'CyberArk Privileged Access Manger (PAM)', date: '2025-10-01', planned: '2025-10-01', amount: 3371550 },
+  { id: 'csv_3d959d40', name: 'Indeed AM', date: '2026-03-03', planned: '2025-10-08', amount: 10831288.8 },
+  { id: 'csv_6b64c3cf', name: 'Positive Technologies MaxPatrol VM', date: '2025-10-01', planned: '2025-10-01', amount: 4827900 },
+  { id: 'csv_94b3196e', name: 'Техническая поддержка по 1IDM', date: '2025-10-01', planned: '2025-10-01', amount: 1731248.64 },
+  { id: 'csv_a1b3de2a', name: 'ПО Mflash', date: '2025-10-01', planned: '2025-10-01', amount: 3618000 },
+  { id: 'csv_5b194f38', name: 'Техническая поддержка PT AF', date: '2025-10-01', planned: '2025-10-01', amount: 300000 },
+  { id: 'csv_704d4ab5', name: 'Kaspersky Total Security', date: '2025-10-01', planned: '2025-10-01', amount: 2453100 },
+  { id: 'csv_90465f98', name: 'Kaspersky Automated Security Awareness', date: '2025-10-01', planned: '2025-10-01', amount: 472300 },
+  { id: 'csv_85492acd', name: 'Kaspersky KATA+EDR', date: '2025-10-01', planned: '2025-10-01', amount: 2518200 },
+  { id: 'csv_7a640b18', name: 'Kaspersky KATA', date: '2025-10-01', planned: '2025-10-01', amount: 6887126 },
+  { id: 'csv_c4353b6a', name: 'ПО Xello Deception', date: '2025-10-01', planned: '2025-10-01', amount: 9936000 },
+  { id: 'csv_f91cba80', name: 'InfoWatch IWPM +50', date: '2026-03-30', planned: '2025-10-07', amount: 2695160.87 },
+  { id: 'csv_27ebbc26', name: '1IDM лицензия бессрочная', date: '2025-09-29', planned: '2025-09-29', amount: 3540000 },
+  { id: 'csv_f456c3e3', name: 'Kaspersky', date: '2025-09-29', planned: '2025-09-29', amount: 42475 },
+  { id: 'csv_329eb996', name: 'ОС Windows 2022', date: '2025-09-29', planned: '2025-09-29', amount: 1197504 },
+  { id: 'csv_34e50b90', name: 'F6 BEP 25-26гг.', date: '2025-09-29', planned: '2025-09-29', amount: 3898047.6 },
+  { id: 'csv_c9d640a2', name: 'Kaspersky', date: '2025-09-29', planned: '2025-09-29', amount: 98010 },
+  { id: 'csv_9b67bbbd', name: 'Indeed Access Manager 24-25гг.', date: '2025-11-12', planned: '2025-11-12', amount: 680250 },
+  { id: 'csv_2f3a1c57', name: 'McAfee ESM', date: '2025-09-29', planned: '2025-09-29', amount: 885500 },
+  { id: 'csv_7c1e5bbc', name: 'CyberArk Privileged Access Manager (PAM)', date: '2025-09-29', planned: '2025-09-29', amount: 3298000 },
+  { id: 'csv_53f5ebec', name: 'Indeed PAM', date: '2025-11-11', planned: '2025-11-11', amount: 10480131 },
+  { id: 'csv_166521f6', name: 'Indeed Privileged Access Manager', date: '2025-09-29', planned: '2025-09-29', amount: 10480131 },
+  { id: 'csv_11397c3b', name: 'Indeed PAM 26-27гг.', date: '2026-01-16', planned: '2026-01-16', amount: 2599740 },
+  { id: 'csv_52fc5fe7', name: 'Kaspersky', date: '2025-09-29', planned: '2025-09-29', amount: 369515 },
+  { id: 'csv_63a0b037', name: 'Kaspersky DDoS', date: '2025-10-01', planned: '2025-10-01', amount: 3947658.3 },
+  { id: 'csv_c0927907', name: 'CyberArk PAM', date: '2025-09-29', planned: '2025-09-29', amount: 2091665 },
+  { id: 'csv_8ae98e87', name: 'Установка и поддержка 1IDM', date: '2025-09-29', planned: '2025-09-29', amount: 3709000 },
+  { id: 'csv_d55dcedd', name: 'Перенос ЦОД INDEED PAM', date: '2026-01-14', planned: '2026-01-14', amount: 1498200 },
+  { id: 'csv_65287212', name: 'Kaspersky EDR', date: '2025-11-14', planned: '2025-11-14', amount: 1318081.3 },
+  { id: 'csv_5c36a036', name: 'Kaspersky DDoS', date: '2025-10-06', planned: '2025-10-06', amount: 3845546.4 },
+  { id: 'csv_7e6060ec', name: 'Solar WebProxy 25-27гг.', date: '2025-11-17', planned: '2025-11-17', amount: 6161925 },
+  { id: 'csv_f966b3a2', name: 'ГАРДА БД', date: '2025-10-10', planned: '2025-10-10', amount: 3279536.96 },
+  { id: 'csv_b1473a1a', name: 'SOTI ONE', date: '2025-10-01', planned: '2025-10-01', amount: 575000 },
+  { id: 'csv_1dd662b0', name: 'MFlash', date: '2025-10-22', planned: '2025-10-22', amount: 7412500 },
+  { id: 'csv_04488f61', name: 'Сделка #178', date: '2025-02-07', planned: '2025-02-07', amount: 36670202 },
+  { id: 'csv_e0054929', name: 'РиК: IDM', date: '2024-11-12', planned: '2024-11-12', amount: 8999 },
+  { id: 'csv_0b47a721', name: 'MDM: Рога и Копыта', date: '2024-11-10', planned: '2024-11-10', amount: 7000 },
+  { id: 'csv_208215d3', name: 'MDM: Рога и Копыта', date: '2024-11-10', planned: '2024-11-10', amount: 126666 },
+];
+let deals = [];
+
+function loadDeals() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) deals = JSON.parse(raw);
+    else { deals = initialDeals.slice(); saveDeals(); }
+  } catch(e) { deals = initialDeals.slice(); }
+}
+
+function loadDeals() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) localDeals = JSON.parse(raw);
+    else localDeals = [];
+  } catch(e) { localDeals = []; }
+}
+
+function saveDeals() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(localDeals));
+}
+
+function fetchBitrixDeals() {
+  return new Promise(function(resolve, reject) {
+    if (typeof BX24 === 'undefined') {
+      resolve([]);
+      return;
+    }
+    var all = [];
+    function page(start) {
+      BX24.callMethod('crm.deal.list', {
+        filter: { CLOSED: 'Y', STAGE_SEMANTIC_ID: 'P' },
+        select: ['ID', 'TITLE', 'OPPORTUNITY', 'CLOSEDATE', 'CURRENCY_ID'],
+        start: start
+      }, function(res) {
+        if (res.error()) { reject(res.error()); return; }
+        all = all.concat(res.data());
+        if (res.more()) { page(all.length); }
+        else { resolve(all); }
+      });
+    }
+    page(0);
+  });
+}
+
+function allDeals() {
+  return bitrixDeals.concat(localDeals);
+}
+
+function getQuarterInfo(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  const y = d.getFullYear();
+  const m = d.getMonth() + 1;
+  let q, label;
+  if (m <= 3) { q = 1; label = 'Q1'; }
+  else if (m <= 6) { q = 2; label = 'Q2'; }
+  else if (m <= 9) { q = 3; label = 'Q3'; }
+  else { q = 4; label = 'Q4'; }
+  return { year: y, quarter: q, sort: y + '-' + q, label: label };
+}
+
+function formatAmount(n) {
+  return n.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function escapeHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+const qLabels = { 1: 'Q1', 2: 'Q2', 3: 'Q3', 4: 'Q4' };
+const qSeasonColors = { 1: 'q1', 2: 'q2', 3: 'q3', 4: 'q4' };
+const qIcons = { 1: '\u2744', 2: '\u2600', 3: '\u2600', 4: '\u2614' };
+
+function render() {
+  const container = document.getElementById('quarterContent');
+  const gc = document.getElementById('grandTotalContainer');
+  const countLabel = document.getElementById('dealCountLabel');
+  const all = allDeals();
+
+  if (all.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">📋</div><strong>Пока нет сделок</strong><p>Откройте страницу внутри Битрикс24, чтобы загрузить данные из портала</p></div>';
+    gc.innerHTML = '';
+    countLabel.textContent = '';
+    return;
+  }
+
+  countLabel.textContent = '\u2022 ' + all.length + ' сделок';
+
+  const byYear = {};
+  for (const deal of all) {
+    const qi = getQuarterInfo(deal.date);
+    if (!byYear[qi.year]) byYear[qi.year] = {};
+    if (!byYear[qi.year][qi.quarter]) byYear[qi.year][qi.quarter] = [];
+    byYear[qi.year][qi.quarter].push(deal);
+  }
+
+  const years = Object.keys(byYear).sort(function(a, b) { return b - a; });
+  let grandTotal = 0;
+
+  let html = '';
+
+  for (const yi of years) {
+    const year = parseInt(yi);
+    const yearQuarters = byYear[yi];
+    let yearTotal = 0;
+    for (const q of [1, 2, 3, 4]) {
+      if (yearQuarters[q]) {
+        yearTotal += yearQuarters[q].reduce(function(s, d) { return s + Number(d.amount); }, 0);
+      }
+    }
+    grandTotal += yearTotal;
+
+    html += '<div class="year-section">' +
+      '<div class="year-header"><span class="year-label">' + year + '</span><span class="year-total">' + formatAmount(yearTotal) + ' \u20BD</span></div>' +
+      '<div class="quarter-grid">';
+
+    for (let qi = 1; qi <= 4; qi++) {
+      const deals_q = yearQuarters[qi];
+      if (!deals_q || deals_q.length === 0) {
+        html += '<div class="q-card ' + qSeasonColors[qi] + ' empty">' +
+          '<div class="q-card-header" style="cursor:default;">' +
+            '<span class="q-name">' + qLabels[qi] + '</span>' +
+            '<span class="q-total">0 \u20BD</span>' +
+          '</div>' +
+        '</div>';
+        continue;
+      }
+
+      const sorted = deals_q.sort(function(a, b) {
+        return a.date.localeCompare(b.date) || (a.id > b.id ? 1 : -1);
+      });
+      const qTotal = sorted.reduce(function(s, d) { return s + Number(d.amount); }, 0);
+
+      html += '<div class="q-card ' + qSeasonColors[qi] + '">' +
+        '<div class="q-card-header" onclick="toggleCard(this)">' +
+          '<span class="q-name">' + qLabels[qi] + ' <span class="q-arrow">\u25BC</span></span>' +
+          '<span class="q-total">' + formatAmount(qTotal) + ' \u20BD</span>' +
+        '</div>' +
+        '<div class="q-card-body">' +
+          '<table class="q-table">' +
+            '<thead><tr><th>Дата закрытия</th><th class="planned-th">Плановая дата</th><th>Сделка</th><th style="text-align:right">Сумма</th><th></th></tr></thead>' +
+            '<tbody>';
+
+      for (const deal of sorted) {
+        var isLocal = localDeals.indexOf(deal) >= 0;
+        html += '<tr>' +
+          '<td>' + formatDate(deal.date) + '</td>' +
+          '<td class="planned-date-cell">' + (deal.planned ? formatDate(deal.planned) : '\u2014') + '</td>' +
+          '<td class="deal-name-cell" title="' + escapeHtml(deal.name) + '">' + escapeHtml(deal.name) + '</td>' +
+          '<td class="amount-cell">' + formatAmount(Number(deal.amount)) + ' \u20BD</td>' +
+          '<td class="delete-cell">' + (isLocal ? '<button class="delete-btn" onclick="deleteDeal(\'' + deal.id + '\')" title="Удалить">\u2715</button>' : '') + '</td>' +
+        '</tr>';
+      }
+
+      html += '<tr class="total-row"><td colspan="3" style="font-size:12px;">Итого</td><td class="amount-cell">' + formatAmount(qTotal) + ' \u20BD</td><td></td></tr>' +
+        '</tbody></table></div></div>';
+    }
+
+    html += '</div></div>';
+  }
+
+  container.innerHTML = html;
+
+  gc.innerHTML = '<div class="grand-total"><div class="label">Общий итог</div><div class="value">' + formatAmount(grandTotal) + ' \u20BD</div></div>';
+}
+
+function toggleCard(header) {
+  const body = header.nextElementSibling;
+  const card = header.parentElement;
+  const arrow = header.querySelector('.q-arrow');
+  body.classList.toggle('collapsed');
+  card.classList.toggle('collapsed');
+  if (arrow) arrow.classList.toggle('open');
+}
+
+function addDeal(date, amount, name) {
+  const deal = {
+    id: 'local_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    date: date,
+    name: name || '',
+    amount: Number(amount)
+  };
+  localDeals.push(deal);
+  saveDeals();
+  render();
+}
+
+function deleteDeal(id) {
+  if (!confirm('Удалить эту сделку?')) return;
+  localDeals = localDeals.filter(function(d) { return d.id !== id; });
+  saveDeals();
+  render();
+}
+
+document.getElementById('dealForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const dateInput = document.getElementById('dealDate');
+  const nameInput = document.getElementById('dealName');
+  const amountInput = document.getElementById('dealAmount');
+  if (!dateInput.value || !amountInput.value) return;
+  addDeal(dateInput.value, amountInput.value, nameInput.value);
+  dateInput.value = '';
+  nameInput.value = '';
+  amountInput.value = '';
+  dateInput.focus();
+});
+
+document.getElementById('clearAllBtn').addEventListener('click', function() {
+  if (localDeals.length === 0) return;
+  if (!confirm('Удалить все сделки, добавленные вручную? Это действие нельзя отменить.')) return;
+  localDeals = [];
+  saveDeals();
+  render();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  loadDeals();
+  render();
+
+  if (typeof BX24 !== 'undefined') {
+    BX24.init(function() {
+      fetchBitrixDeals().then(function(list) {
+        bitrixDeals = list.map(function(d) {
+          return {
+            id: 'bx_' + d.ID,
+            name: d.TITLE || '',
+            date: d.CLOSEDATE ? d.CLOSEDATE.split('T')[0] : '',
+            amount: parseFloat(d.OPPORTUNITY) || 0
+          };
+        }).filter(function(d) { return d.date && d.amount > 0; });
+        render();
+      }).catch(function(err) {
+        console.error('Bitrix24 API error:', err);
+        render();
+      });
+    });
+  } else {
+    render();
+  }
+
+  document.getElementById('dealDate').valueAsDate = new Date();
+});
+</script>
+</body>
+</html>
