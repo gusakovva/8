@@ -484,7 +484,7 @@ function fetchBitrixDeals() {
     var all = [];
     function page(start) {
       BX24.callMethod('crm.deal.list', {
-        filter: { CLOSED: 'Y', STAGE_SEMANTIC_ID: 'P' },
+        filter: { CLOSED: 'Y', STAGE_SEMANTIC_ID: 'S' },
         select: ['ID', 'TITLE', 'OPPORTUNITY', 'CLOSEDATE', 'CURRENCY_ID'],
         start: start
       }, function(res) {
