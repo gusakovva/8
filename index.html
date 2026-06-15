@@ -539,7 +539,7 @@ function render() {
   const all = allDeals();
 
   if (all.length === 0) {
-    container.innerHTML = '<div class="empty-state"><div class="icon">📋</div><strong>Пока нет сделок</strong><p>Откройте страницу внутри Битрикс24, чтобы загрузить данные из портала</p></div>';
+    container.innerHTML = '<div class="empty-state"><div class="icon">📋</div><strong>Пока нет сделок</strong><p id="statusMsg">Проверка подключения к порталу...</p></div>';
     gc.innerHTML = '';
     countLabel.textContent = '';
     return;
@@ -674,13 +674,21 @@ document.getElementById('clearAllBtn').addEventListener('click', function() {
   render();
 });
 
+function setStatus(msg) {
+  var el = document.getElementById('statusMsg');
+  if (el) el.textContent = msg;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   loadDeals();
   render();
 
   if (typeof BX24 !== 'undefined') {
+    setStatus('BX24 обнаружен, инициализация...');
     BX24.init(function() {
+      setStatus('BX24 инициализирован, запрос сделок...');
       fetchBitrixDeals().then(function(list) {
+        setStatus('Загружено ' + list.length + ' сделок через API');
         bitrixDeals = list.map(function(d) {
           return {
             id: 'bx_' + d.ID,
@@ -691,12 +699,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }).filter(function(d) { return d.date && d.amount > 0; });
         render();
       }).catch(function(err) {
+        setStatus('Ошибка API: ' + (err.message || err));
         console.error('Bitrix24 API error:', err);
         render();
       });
     });
   } else {
-    render();
+    setStatus('BX24 не обнаружен — страница не внутри портала');
   }
 
   document.getElementById('dealDate').valueAsDate = new Date();
